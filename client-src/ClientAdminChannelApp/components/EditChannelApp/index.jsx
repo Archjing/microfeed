@@ -105,7 +105,7 @@ export default class EditChannelApp extends React.Component {
 
   onSubmit(e) {
     e.preventDefault();
-    const isZh = isChineseLanguage(this.state.feed.channel.language);
+    const isZh = isChineseLanguage(this.state.channel.language);
     const t = (zhText, enText) => isZh ? zhText : enText;
     this.onUpdateChannelMetaToFeed(() => {
       const {feed} = this.state;
@@ -134,10 +134,10 @@ export default class EditChannelApp extends React.Component {
     const submitting = submitStatus === SUBMIT_STATUS__START;
     const webGlobalSettings = feed.settings.webGlobalSettings || {};
     const publicBucketUrl = webGlobalSettings.publicBucketUrl || '';
-    const isZh = isChineseLanguage(feed.channel.language);
+    const isZh = isChineseLanguage(channel.language);
     const t = (zhText, enText) => isZh ? zhText : enText;
 
-    return (<AdminNavApp currentPage={NAV_ITEMS.EDIT_CHANNEL} onboardingResult={onboardingResult} language={feed.channel.language}>
+    return (<AdminNavApp currentPage={NAV_ITEMS.EDIT_CHANNEL} onboardingResult={onboardingResult} language={channel.language}>
       <form className="grid grid-cols-12 gap-4">
         <div className="col-span-9 grid grid-cols-1 gap-4">
           <div className="lh-page-card">
