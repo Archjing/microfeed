@@ -176,5 +176,7 @@ yarn test
 
 ## License
 
-本仓库当前 `package.json` 中声明的是 `MIT`。
-如需确认最终授权条款，请同时查看仓库中的 [LICENSE](./LICENSE) 文件。
+microfeed 采用 [GNU AGPL v3](./LICENSE) 许可证。
+
+如果你修改了这个项目并通过公开可访问的网络服务对外提供使用，通常需要按照 AGPL 的要求向用户提供对应的修改版源码。
+如需确认完整条款，请直接查看仓库中的 [LICENSE](./LICENSE) 文件。
