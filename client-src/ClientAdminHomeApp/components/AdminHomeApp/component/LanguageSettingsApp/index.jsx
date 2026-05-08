@@ -3,7 +3,7 @@ import clsx from "clsx";
 import Requests from "../../../../../common/requests";
 import {ADMIN_URLS} from "../../../../../../common-src/StringUtils";
 import {showToast} from "../../../../../common/ToastUtils";
-import {isChineseLanguage, pickTextByLanguage} from "../../../../../../common-src/I18n";
+import {isChineseLanguage} from "../../../../../../common-src/I18n";
 
 const SUBMIT_STATUS__START = 1;
 
@@ -42,6 +42,10 @@ export default class LanguageSettingsApp extends React.Component {
 
   updateLanguage(language) {
     const {feed, onUpdated} = this.props;
+    const nextIsZh = isChineseLanguage(language);
+    const successText = nextIsZh ? '更新成功！' : 'Updated!';
+    const networkErrorText = nextIsZh ? '网络错误，请刷新页面后重试。' : 'Network error. Please refresh the page and try again.';
+    const failedText = nextIsZh ? '更新失败，请重试。' : 'Update failed. Please try again.';
     this.setState({submitStatus: SUBMIT_STATUS__START});
     Requests.axiosPost(ADMIN_URLS.ajaxFeed(), {
       channel: {
@@ -53,18 +57,17 @@ export default class LanguageSettingsApp extends React.Component {
         if (onUpdated) {
           onUpdated(language);
         }
-        showToast(pickTextByLanguage(language, '网页语言已更新。', 'Website language updated.'), 'success');
+        showToast(successText, 'success');
         setTimeout(() => {
           location.reload();
         }, 300);
       });
     }).catch((error) => {
       this.setState({submitStatus: null});
-      const currentLanguage = this.state.currentLanguage || 'en-us';
       if (!error.response) {
-        showToast(pickTextByLanguage(currentLanguage, '网络错误，请刷新页面后重试。', 'Network error. Please refresh the page and try again.'), 'error');
+        showToast(networkErrorText, 'error');
       } else {
-        showToast(pickTextByLanguage(currentLanguage, '更新失败，请重试。', 'Update failed. Please try again.'), 'error');
+        showToast(failedText, 'error');
       }
     });
   }
