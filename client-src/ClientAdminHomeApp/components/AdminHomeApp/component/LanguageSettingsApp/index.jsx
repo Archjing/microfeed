@@ -13,14 +13,22 @@ const LANGUAGE_OPTIONS = [
     title: '简体中文',
     descriptionZh: '适合中文网站，公开页面会输出 `lang="zh-cn"`。',
     descriptionEn: 'Best for Chinese websites. Public pages will output `lang="zh-cn"`.',
+    successText: '更新成功！',
+    networkErrorText: '网络错误，请刷新页面后重试。',
+    failedText: '更新失败，请重试。',
   },
   {
     code: 'en-us',
     title: 'English',
     descriptionZh: '适合英文网站，公开页面会输出 `lang="en-us"`。',
     descriptionEn: 'Best for English websites. Public pages will output `lang="en-us"`.',
+    successText: 'Updated!',
+    networkErrorText: 'Network error. Please refresh the page and try again.',
+    failedText: 'Update failed. Please try again.',
   },
 ];
+
+const LANGUAGE_OPTIONS_DICT = Object.assign({}, ...LANGUAGE_OPTIONS.map((option) => ({[option.code]: option})));
 
 function getCurrentLanguageLabel(language) {
   const current = LANGUAGE_OPTIONS.find((option) => option.code === language);
@@ -42,10 +50,7 @@ export default class LanguageSettingsApp extends React.Component {
 
   updateLanguage(language) {
     const {feed, onUpdated} = this.props;
-    const nextIsZh = isChineseLanguage(language);
-    const successText = nextIsZh ? '更新成功！' : 'Updated!';
-    const networkErrorText = nextIsZh ? '网络错误，请刷新页面后重试。' : 'Network error. Please refresh the page and try again.';
-    const failedText = nextIsZh ? '更新失败，请重试。' : 'Update failed. Please try again.';
+    const targetOption = LANGUAGE_OPTIONS_DICT[language] || LANGUAGE_OPTIONS_DICT['en-us'];
     this.setState({submitStatus: SUBMIT_STATUS__START});
     Requests.axiosPost(ADMIN_URLS.ajaxFeed(), {
       channel: {
@@ -54,10 +59,10 @@ export default class LanguageSettingsApp extends React.Component {
       },
     }).then(() => {
       this.setState({submitStatus: null, currentLanguage: language}, () => {
+        showToast(targetOption.successText, 'success');
         if (onUpdated) {
           onUpdated(language);
         }
-        showToast(successText, 'success');
         setTimeout(() => {
           location.reload();
         }, 300);
@@ -65,9 +70,9 @@ export default class LanguageSettingsApp extends React.Component {
     }).catch((error) => {
       this.setState({submitStatus: null});
       if (!error.response) {
-        showToast(networkErrorText, 'error');
+        showToast(targetOption.networkErrorText, 'error');
       } else {
-        showToast(failedText, 'error');
+        showToast(targetOption.failedText, 'error');
       }
     });
   }
