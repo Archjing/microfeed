@@ -1,4 +1,6 @@
 compatibility_date = "2025-03-14"
+# solve Cloudfare warning
+pages_build_output_dir = "public"
 
 [[ env.development.d1_databases ]]
 binding = "FEED_DB"
