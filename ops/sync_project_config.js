@@ -44,7 +44,7 @@ class SyncProjectConfig {
     const bucketName = this._getVarValue('R2_PUBLIC_BUCKET');
     if (bucketName) {
       deploymentConfig.r2_buckets = {
-        R2_PUBLIC_BUCKET: {
+        R2_BUCKET: {
           name: bucketName,
         },
       };

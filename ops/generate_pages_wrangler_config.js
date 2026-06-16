@@ -18,7 +18,7 @@ function buildConfig(databaseId) {
     `[env.${currentEnv}]`,
     '',
     `[[env.${currentEnv}.r2_buckets]]`,
-    'binding = "R2_PUBLIC_BUCKET"',
+    'binding = "R2_BUCKET"',
     `bucket_name = "${bucketName}"`,
   ];
 

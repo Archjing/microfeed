@@ -6,13 +6,13 @@ pages_build_output_dir = "public"
 [env.production]
 
 [[env.production.r2_buckets]]
-binding = "R2_PUBLIC_BUCKET"
+binding = "R2_BUCKET"
 bucket_name = "microfeed-public"
 
 [env.preview]
 
 [[env.preview.r2_buckets]]
-binding = "R2_PUBLIC_BUCKET"
+binding = "R2_BUCKET"
 bucket_name = "microfeed-public"
 
 [[env.production.d1_databases]]
