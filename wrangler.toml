@@ -14,16 +14,17 @@ bucket_name = "microfeed-public"
 [env.production.d1_databases]
 binding = "FEED_DB"
 database_name = "FEED_DB"
-database_id = ""
-preview_id = ""
+database_id = "db_production_placeholder"
+preview_id = "db_production_preview_placeholder"
 
 [env.preview.d1_databases]
 binding = "FEED_DB"
 database_name = "FEED_DB"
-database_id = ""
-preview_id = ""
+database_id = "db_preview_placeholder"
+preview_id = "db_preview_preview_placeholder"
 
 [env.development.d1_databases]
 binding = "FEED_DB"
 database_name = "FEED_DB"
 database_id = "id_placeholder"
+preview_id = "id_placeholder"
