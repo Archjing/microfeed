@@ -96,27 +96,11 @@ export default class FeedPublicRssBuilder {
       '@_href': PUBLIC_URLS.rssFeed(this.baseUrl),
       '@_type': 'application/rss+xml',
     };
-    const linksTags = [];
     if (this.jsonData.home_page_url) {
-      linksTags.push(this.jsonData.home_page_url);
+      channelRss['link'] = this.jsonData.home_page_url;
+    } else {
+      channelRss['link'] = this.baseUrl;
     }
-    if (this.jsonData._microfeed.items_next_cursor) {
-      const {items_next_cursor, items_sort_order} = this.jsonData._microfeed;
-      linksTags.push({
-        '@_rel': 'next',
-        '@_href': `${PUBLIC_URLS.rssFeed(this.baseUrl)}?next_cursor=${items_next_cursor}&sort=${items_sort_order}`,
-        '@_type': 'application/rss+xml',
-      });
-    }
-    if (this.jsonData._microfeed.items_prev_cursor) {
-      const {items_prev_cursor, items_sort_order} = this.jsonData._microfeed;
-      linksTags.push({
-        '@_rel': 'prev',
-        '@_href': `${PUBLIC_URLS.rssFeed(this.baseUrl)}?prev_cursor=${items_prev_cursor}&sort=${items_sort_order}`,
-        '@_type': 'application/rss+xml',
-      });
-    }
-    channelRss['link'] = linksTags;
     if (this.jsonData.description) {
       channelRss['description'] = {
         '@cdata': this.jsonData.description,
