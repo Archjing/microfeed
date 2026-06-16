@@ -5,6 +5,8 @@ const { WranglerCmd, VarsReader } = require('./lib/utils');
 const currentEnv = process.env.DEPLOYMENT_ENVIRONMENT || 'production';
 const vars = new VarsReader(currentEnv);
 const cmd = new WranglerCmd(currentEnv);
+const outputPath = path.join(process.cwd(), 'wrangler.toml');
+const backupPath = path.join(process.cwd(), '.wrangler.toml.backup');
 
 function buildConfig(databaseId) {
   const bucketName = vars.get('R2_PUBLIC_BUCKET') || 'microfeed-public';
@@ -39,7 +41,9 @@ cmd.getDatabaseId((databaseId) => {
     process.exit(1);
   }
 
-  const outputPath = path.join(process.cwd(), '.wrangler-pages.toml');
+  if (fs.existsSync(outputPath) && !fs.existsSync(backupPath)) {
+    fs.copyFileSync(outputPath, backupPath);
+  }
   fs.writeFileSync(outputPath, buildConfig(databaseId), 'utf8');
   console.log(outputPath);
 });

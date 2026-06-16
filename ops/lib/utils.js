@@ -38,15 +38,14 @@ class WranglerCmd {
       `CLOUDFLARE_API_TOKEN=${apiToken} ` + wranglerCmd;
   }
 
-  publishProject(configPath = null) {
+  publishProject() {
     const projectName = this.v.get('CLOUDFLARE_PROJECT_NAME');
     const productionBranch = this.v.get('PRODUCTION_BRANCH', 'main');
 
     // Cloudflare Pages direct upload uses branch to decide deployment environment.
     // If we want production, then use production_branch. Otherwise, just something else
     const branch = this.currentEnv === 'production' ? productionBranch : `${productionBranch}-preview`;
-    const configArg = configPath ? ` --config ${configPath}` : '';
-    const wranglerCmd = `wrangler pages deploy public --project-name ${projectName} --branch ${branch}${configArg} --commit-dirty=true`;
+    const wranglerCmd = `wrangler pages deploy public --project-name ${projectName} --branch ${branch} --commit-dirty=true`;
     console.log(wranglerCmd);
     return this._getCmd(wranglerCmd);
   }
