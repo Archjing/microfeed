@@ -3,6 +3,14 @@ compatibility_date = "2025-03-14"
 # solve Cloudfare warning
 pages_build_output_dir = "public"
 
+[env.production.r2_buckets]
+binding = "R2_PUBLIC_BUCKET"
+bucket_name = "microfeed-public"
+
+[env.preview.r2_buckets]
+binding = "R2_PUBLIC_BUCKET"
+bucket_name = "microfeed-public"
+
 [env.production.d1_databases]
 binding = "FEED_DB"
 database_name = "FEED_DB"
