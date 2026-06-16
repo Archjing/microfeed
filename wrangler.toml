@@ -3,9 +3,15 @@ compatibility_date = "2025-03-14"
 # solve Cloudfare warning
 pages_build_output_dir = "public"
 
-[env.production]
+[env.production.d1_databases]
+binding = "FEED_DB"
+database_name = "FEED_DB"
+database_id = ""
 
-[env.preview]
+[env.preview.d1_databases]
+binding = "FEED_DB"
+database_name = "FEED_DB"
+database_id = ""
 
 [env.development.d1_databases]
 binding = "FEED_DB"
