@@ -90,16 +90,37 @@ class WranglerCmd {
         data = data + chunk.toString();
       });
 
-      response.on('end', () => {
-        const body = JSON.parse(data);
-        let databaseId = '';
-        body.result.forEach((result) => {
-          if (result.name === dbName) {
-            databaseId = result.uuid;
-          }
-        });
-        onSuccess(databaseId);
+    response.on('end', () => {
+      let body;
+      try {
+        body = JSON.parse(data);
+      } catch (e) {
+        console.error('[utils.js] JSON parse failed. Raw response:', data.toString());
+        throw new Error(`Invalid JSON response from API: ${e.message}`);
+      }
+
+      // 核心修复：防御性检查 result 是否为有效数组
+      const results = body?.result;
+      if (!Array.isArray(results)) {
+        console.error('[utils.js] Expected body.result to be an array, but got:', typeof results, results);
+        console.error('[utils.js] Full response body:', JSON.stringify(body, null, 2));
+        throw new Error(`API returned unexpected structure: body.result is ${results === null ? 'null' : typeof results}`);
+      }
+
+      let databaseId = '';
+      results.forEach((result) => {
+        if (result.name === dbName) {
+          databaseId = result.uuid;
+        }
       });
+
+  // 可选：如果 databaseId 必须存在，建议在此处也加校验
+  if (!databaseId) {
+    console.warn(`[utils.js] Database "${dbName}" not found in API response`);
+  }
+
+  // ... 后续逻辑继续使用 databaseId
+});
     })
 
     request.on('error', (error) => {
