@@ -15,8 +15,6 @@ bucket_name = "microfeed-public"
 binding = "R2_PUBLIC_BUCKET"
 bucket_name = "microfeed-public"
 
-[env.development]
-
 [[env.production.d1_databases]]
 binding = "FEED_DB"
 database_name = "FEED_DB"
@@ -28,9 +26,3 @@ binding = "FEED_DB"
 database_name = "FEED_DB"
 database_id = ""
 preview_id = ""
-
-[[env.development.d1_databases]]
-binding = "FEED_DB"
-database_name = "FEED_DB"
-database_id = "id_placeholder"
-preview_id = "id_placeholder"
