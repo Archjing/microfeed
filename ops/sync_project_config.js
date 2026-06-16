@@ -21,16 +21,17 @@ class SyncProjectConfig {
   constructor() {
     this.currentEnv = process.env.DEPLOYMENT_ENVIRONMENT || 'production';
     this.v = new VarsReader(this.currentEnv);
-    this.cmd = new WranglerCmd(process.env.DEPLOYMENT_ENVIRONMENT || 'development');
+    this.cmd = new WranglerCmd(this.currentEnv);
+  }
+
+  _getVarValue(varName, defaultValue = null) {
+    return process.env[varName] || this.v.get(varName, defaultValue);
   }
 
   _getEnvVarsFromFilesJson(envName, databaseId) {
-    // https://api.cloudflare.com/#pages-project-get-projects
     const envVarsJson = {
       [envName]: {
-        'env_vars': {
-          'DEPLOYMENT_ENVIRONMENT': this.currentEnv,
-        },
+        'env_vars': {},
       },
     };
     if (databaseId) {
@@ -41,7 +42,10 @@ class SyncProjectConfig {
       };
     }
     ALLOWED_VARS.forEach((varDict) => {
-      const varValue = this.v.get(varDict.name) || '';
+      const varValue = this._getVarValue(varDict.name);
+      if (!varValue) {
+        return;
+      }
       envVarsJson[envName]['env_vars'][varDict.name] = {
         'value': varValue,
         'type': varDict.encrypted ? 'secret_text' : 'plain_text',
@@ -54,10 +58,10 @@ class SyncProjectConfig {
     const options = {
       hostname: 'api.cloudflare.com',
       port: 443,
-      path: `/client/v4/accounts/${this.v.get('CLOUDFLARE_ACCOUNT_ID')}/pages/projects/${this.v.get('CLOUDFLARE_PROJECT_NAME')}`,
+      path: `/client/v4/accounts/${this._getVarValue('CLOUDFLARE_ACCOUNT_ID')}/pages/projects/${this._getVarValue('CLOUDFLARE_PROJECT_NAME')}`,
       method: 'PATCH',
       headers: {
-        'Authorization': `Bearer ${this.v.get('CLOUDFLARE_API_TOKEN')}`,
+        'Authorization': `Bearer ${this._getVarValue('CLOUDFLARE_API_TOKEN')}`,
         'Content-Type': 'application/json',
         'Content-Length': data.length,
       },
@@ -99,7 +103,7 @@ class SyncProjectConfig {
     // ensure that required vars are set
     let missingVars = [];
     ALLOWED_VARS.forEach((varDict) => {
-      if (varDict.required && !this.v.get(varDict.name)) {
+      if (varDict.required && !this._getVarValue(varDict.name)) {
         missingVars.push(varDict.name);
       }
     });
@@ -108,8 +112,8 @@ class SyncProjectConfig {
       process.exit(1);
     }
     // ensure that the project name is valid
-    if (!this.v.get('CLOUDFLARE_PROJECT_NAME').match(/^[a-zA-Z0-9-]+$/)) {
-      console.error(`Invalid project name: ${this.v.get('CLOUDFLARE_PROJECT_NAME')}`);
+    if (!this._getVarValue('CLOUDFLARE_PROJECT_NAME').match(/^[a-zA-Z0-9-]+$/)) {
+      console.error(`Invalid project name: ${this._getVarValue('CLOUDFLARE_PROJECT_NAME')}`);
       process.exit(1);
     }
 
@@ -125,7 +129,13 @@ class SyncProjectConfig {
       this._updateEnvVars(varsToAddOrUpdate, (json) => {
         console.log(`Successfully synced for [${this.currentEnv}]!`);
         if (json.result && json.result.deployment_configs) {
-          console.log(json.result.deployment_configs[this.currentEnv].env_vars);
+          const syncedConfig = json.result.deployment_configs[this.currentEnv];
+          const envVarKeys = Object.keys(syncedConfig.env_vars || {});
+          const d1Keys = Object.keys(syncedConfig.d1_databases || {});
+          console.log({
+            envVarKeys,
+            d1Bindings: d1Keys,
+          });
         } else if (json) {
           console.log(json);
         }
