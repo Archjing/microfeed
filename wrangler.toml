@@ -3,27 +3,27 @@ compatibility_date = "2025-03-14"
 # solve Cloudfare warning
 pages_build_output_dir = "public"
 
-[env.production.r2_buckets]
+[[env.production.r2_buckets]]
 binding = "R2_PUBLIC_BUCKET"
 bucket_name = "microfeed-public"
 
-[env.preview.r2_buckets]
+[[env.preview.r2_buckets]]
 binding = "R2_PUBLIC_BUCKET"
 bucket_name = "microfeed-public"
 
-[env.production.d1_databases]
+[[env.production.d1_databases]]
 binding = "FEED_DB"
 database_name = "FEED_DB"
-database_id = "db_production_placeholder"
-preview_id = "db_production_preview_placeholder"
+database_id = ""
+preview_id = ""
 
-[env.preview.d1_databases]
+[[env.preview.d1_databases]]
 binding = "FEED_DB"
 database_name = "FEED_DB"
-database_id = "db_preview_placeholder"
-preview_id = "db_preview_preview_placeholder"
+database_id = ""
+preview_id = ""
 
-[env.development.d1_databases]
+[[env.development.d1_databases]]
 binding = "FEED_DB"
 database_name = "FEED_DB"
 database_id = "id_placeholder"
