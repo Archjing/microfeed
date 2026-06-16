@@ -1,5 +1,5 @@
 import {XMLBuilder} from "fast-xml-parser";
-import {PUBLIC_URLS, secondsToHHMMSS} from "../../common-src/StringUtils";
+import {PUBLIC_URLS, secondsToHHMMSS, htmlToPlainText} from "../../common-src/StringUtils";
 import {msToUtcString} from "../../common-src/TimeUtils";
 import {OUR_BRAND} from "../../common-src/Constants";
 
@@ -15,12 +15,16 @@ export default class FeedPublicRssBuilder {
      const _microfeed = item._microfeed || {};
      const itemJson = {
        'title': item.title || 'untitled',
-       'guid': item.id,
        'pubDate': msToUtcString(item._microfeed.date_published_ms),
        'itunes:explicit': _microfeed['itunes:explicit'] ? 'true' : 'false',
      };
+     itemJson['guid'] = {
+       '#text': item.id,
+       '@_isPermaLink': 'false',
+     };
      if (item['content_html']) {
-       itemJson['description'] = {
+       itemJson['description'] = htmlToPlainText(item['content_html']);
+       itemJson['content:encoded'] = {
          '@cdata': item['content_html'],
        };
      }
@@ -102,9 +106,7 @@ export default class FeedPublicRssBuilder {
       channelRss['link'] = this.baseUrl;
     }
     if (this.jsonData.description) {
-      channelRss['description'] = {
-        '@cdata': this.jsonData.description,
-      };
+      channelRss['description'] = htmlToPlainText(this.jsonData.description);
     }
     if (this.jsonData.authors && this.jsonData.authors.length > 0 && this.jsonData.authors[0].name) {
       channelRss['itunes:author'] = this.jsonData.authors[0].name;
@@ -138,9 +140,6 @@ export default class FeedPublicRssBuilder {
     }
     if (_microfeed['itunes:complete']) {
       channelRss['itunes:complete'] = 'Yes';
-    }
-    if (_microfeed['itunes:title'] && _microfeed['itunes:title'].trim().length > 0) {
-      channelRss['itunes:title'] = _microfeed['itunes:title'].trim();
     }
     if (_microfeed['categories'] && _microfeed['categories'].length > 0) {
       const categories = [];
