@@ -1,12 +1,13 @@
+name = "microfeed"
 compatibility_date = "2025-03-14"
 # solve Cloudfare warning
 pages_build_output_dir = "public"
 
-[[ env.development.d1_databases ]]
-binding = "FEED_DB"
-database_name = "FEED_DB"
-database_id = "id_placeholder"
-
 [env.production]
 
 [env.preview]
+
+[env.development.d1_databases]
+binding = "FEED_DB"
+database_name = "FEED_DB"
+database_id = "id_placeholder"
