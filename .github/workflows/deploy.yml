@@ -26,7 +26,7 @@ env:
   D1_DATABASE_NAME: ${{ secrets.D1_DATABASE_NAME }}
   DEPLOYMENT_ENVIRONMENT: ${{ inputs.DEPLOYMENT_ENVIRONMENT }}
   ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
-  PRODUCTION_BRANCH: main
+  PRODUCTION_BRANCH: feature/i18n-language-toggle-merge
 jobs:
   deploy:
     runs-on: ubuntu-latest
